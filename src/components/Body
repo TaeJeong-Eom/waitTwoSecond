@@ -1,0 +1,62 @@
+import React, { useState } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { addTodo, deleteTodo } from '../modules/todosSlice';
+import { 
+  PageWrapper, 
+  TodoContainer, 
+  TodoHeader, 
+  InputContainer, 
+  TodoListContainer, 
+  TodoCard, 
+  Button 
+} from './style';
+
+function Body() {
+  const [inputValue, setInputValue] = useState("");
+  const tasks = useSelector((state) => state.todos.list);
+  const dispatch = useDispatch();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!inputValue) return;
+    dispatch(addTodo(inputValue));
+    setInputValue("");
+  };
+
+  const handleDelete = (id) => {
+    dispatch(deleteTodo(id));
+  };
+
+  return (
+    <PageWrapper>
+      <TodoContainer>
+        <TodoHeader>Add Plan</TodoHeader>
+        <InputContainer>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Add your plan!"
+              className="input-content"
+            />
+            <Button type="submit">추가</Button>
+          </form>
+        </InputContainer>
+      </TodoContainer>
+      <TodoContainer>
+        <TodoHeader>My Plan</TodoHeader>
+        <TodoListContainer>
+          {tasks.map((task) => (
+            <TodoCard key={task.id}>
+              <span>{task.text}</span>
+              <Button onClick={() => handleDelete(task.id)}>삭제</Button>
+            </TodoCard>
+          ))}
+        </TodoListContainer>
+      </TodoContainer>
+    </PageWrapper>
+  );
+}
+
+export default Body;
